@@ -172,9 +172,6 @@
 
     .form-note { font-size: 11px; color: #444; text-align: center; margin-top: 10px; }
 
-    /* Email field hidden on mobile, shown on desktop */
-    .desktop-only { display: none; }
-
     .form-thanks { display: none; text-align: center; padding: 28px 0; }
     .form-thanks-icon { font-size: 32px; margin-bottom: 10px; }
     .form-thanks-text { font-size: 16px; font-weight: 600; color: #B8962E; margin-bottom: 6px; }
@@ -190,8 +187,6 @@
        DESKTOP — two-column layout at 800px+
     ═══════════════════════════════════════════ */
     @media (min-width: 800px) {
-      .desktop-only { display: flex; }
-
       body {
         display: flex;
         align-items: flex-start;
@@ -389,10 +384,6 @@
             <input id="f-phone" type="tel" name="phone" placeholder="(xxx) xxx-xxxx" autocomplete="tel" />
           </div>
         </div>
-        <div class="field desktop-only">
-          <label for="f-email">Email</label>
-          <input id="f-email" type="email" name="email" placeholder="your@email.com" autocomplete="email" />
-        </div>
         <div class="field">
           <label for="f-interest">I'm interested in</label>
           <select id="f-interest" name="interest">
@@ -428,49 +419,27 @@
 </div><!-- /page -->
 
 <script>
-  function isMobile() {
-    return /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  }
-
   function handleSubmit(e) {
     e.preventDefault();
-    const f       = e.target;
-    const name    = f.name.value.trim();
-    const phone   = f.phone.value.trim();
-    const email   = f.email ? f.email.value.trim() : '';
+    const f = e.target;
+    const name     = f.name.value.trim();
+    const phone    = f.phone.value.trim();
     const interest = f.interest.value;
-    const message = f.message.value.trim();
+    const message  = f.message.value.trim();
 
-    if (isMobile()) {
-      // Mobile: open SMS app with pre-filled message
-      const lines = [
-        'Hi Jacob, I found you via your QR code.',
-        'Name: ' + name,
-        phone   ? 'Phone: ' + phone    : null,
-        'Interest: ' + interest,
-        message ? 'Notes: ' + message  : null,
-      ].filter(Boolean).join('\n');
+    const lines = [
+      'Hi Jacob, I found you via your QR code.',
+      'Name: ' + name,
+      phone   ? 'Phone: ' + phone      : null,
+      'Interest: ' + interest,
+      message ? 'Notes: ' + message    : null,
+    ].filter(Boolean).join('\n');
 
-      const smsLink = 'sms:+15017949566' +
-        (navigator.userAgent.match(/iPhone|iPad/i) ? '&' : '?') +
-        'body=' + encodeURIComponent(lines);
+    const smsLink = 'sms:+15017949566' +
+      (navigator.userAgent.match(/iPhone|iPad/i) ? '&' : '?') +
+      'body=' + encodeURIComponent(lines);
 
-      window.location.href = smsLink;
-    } else {
-      // Desktop: open email client with pre-filled email
-      const subject = 'New inquiry from jacobpage.realtor';
-      const body = [
-        'Name: ' + name,
-        phone   ? 'Phone: ' + phone    : null,
-        email   ? 'Email: ' + email    : null,
-        'Interest: ' + interest,
-        message ? 'Notes: ' + message  : null,
-      ].filter(Boolean).join('\n');
-
-      window.location.href = 'mailto:jacob@halseyre.com' +
-        '?subject=' + encodeURIComponent(subject) +
-        '&body='    + encodeURIComponent(body);
-    }
+    window.location.href = smsLink;
 
     f.style.display = 'none';
     document.getElementById('form-thanks').style.display = 'block';
