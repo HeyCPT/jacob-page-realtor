@@ -340,7 +340,7 @@
           </div>
           <div class="oh-footer">
             <div class="oh-time">Sat, Apr 4 &bull; 2:00&ndash;4:00 PM</div>
-            <a class="oh-dir" href="https://maps.google.com/?q=9017+Naples+Cove+Benton+AR" target="_blank" rel="noopener">Directions &rarr;</a>
+            <a class="oh-dir" href="#" onclick="openMaps('9017 Naples Cove, Benton, AR'); return false;">Directions &rarr;</a>
           </div>
         </div>
 
@@ -358,7 +358,7 @@
           </div>
           <div class="oh-footer">
             <div class="oh-time">Sun, Apr 5 &bull; 2:00&ndash;4:00 PM</div>
-            <a class="oh-dir" href="https://maps.google.com/?q=89+Bame+Circle+Bryant+AR" target="_blank" rel="noopener">Directions &rarr;</a>
+            <a class="oh-dir" href="#" onclick="openMaps('89 Bame Circle, Bryant, AR'); return false;">Directions &rarr;</a>
           </div>
         </div>
 
@@ -455,6 +455,15 @@
 </div><!-- /page -->
 
 <script>
+  function openMaps(address) {
+    const encoded = encodeURIComponent(address);
+    if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+      window.location.href = 'maps://?q=' + encoded;
+    } else {
+      window.location.href = 'geo:0,0?q=' + encoded;
+    }
+  }
+
   function handleSubmit(e) {
     e.preventDefault();
     const f = e.target;
