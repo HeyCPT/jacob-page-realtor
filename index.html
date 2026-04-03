@@ -121,13 +121,22 @@
     }
     .oh-time { font-size: 13px; font-weight: 600; color: #B8962E; }
 
-    .oh-dir {
-      font-size: 12px; font-weight: 600; color: #888;
+    .oh-actions { display: flex; gap: 8px; }
+
+    .oh-dir, .oh-flyer {
+      font-size: 12px; font-weight: 600;
       text-decoration: none; padding: 5px 10px;
-      border: 1px solid #333; border-radius: 6px;
-      transition: color 0.15s, border-color 0.15s;
+      border-radius: 6px;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+    }
+    .oh-dir {
+      color: #888; border: 1px solid #333;
     }
     .oh-dir:hover { color: #B8962E; border-color: #B8962E; }
+    .oh-flyer {
+      color: #B8962E; border: 1px solid #B8962E;
+    }
+    .oh-flyer:hover { background: #B8962E; color: #111; }
 
     /* ─── ABOUT ─── */
     .about-text { font-size: 15px; line-height: 1.75; color: #CCCCCC; }
@@ -340,7 +349,10 @@
           </div>
           <div class="oh-footer">
             <div class="oh-time">Sat, Apr 4 &bull; 2:00&ndash;4:00 PM</div>
-            <a class="oh-dir" href="#" onclick="openMaps('9017 Naples Cove, Benton, AR'); return false;">Directions &rarr;</a>
+            <div class="oh-actions">
+              <a class="oh-flyer" href="naples-flyer.jpg" target="_blank">Flyer</a>
+              <a class="oh-dir" href="#" onclick="openMaps('9017 Naples Cove, Benton, AR'); return false;">Directions &rarr;</a>
+            </div>
           </div>
         </div>
 
@@ -358,7 +370,10 @@
           </div>
           <div class="oh-footer">
             <div class="oh-time">Sun, Apr 5 &bull; 2:00&ndash;4:00 PM</div>
-            <a class="oh-dir" href="#" onclick="openMaps('89 Bame Circle, Bryant, AR'); return false;">Directions &rarr;</a>
+            <div class="oh-actions">
+              <a class="oh-flyer" href="bame-flyer.jpg" target="_blank">Flyer</a>
+              <a class="oh-dir" href="#" onclick="openMaps('89 Bame Circle, Bryant, AR'); return false;">Directions &rarr;</a>
+            </div>
           </div>
         </div>
 
