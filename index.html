@@ -458,9 +458,9 @@
   function openMaps(address) {
     const encoded = encodeURIComponent(address);
     if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-      window.location.href = 'maps://?q=' + encoded;
+      window.open('https://maps.apple.com/?daddr=' + encoded, '_blank');
     } else {
-      window.location.href = 'geo:0,0?q=' + encoded;
+      window.open('https://www.google.com/maps/dir/?api=1&destination=' + encoded, '_blank');
     }
   }
 
