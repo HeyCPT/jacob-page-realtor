@@ -1,0 +1,56 @@
+name: Cleanup Expired Open Houses
+
+on:
+  schedule:
+    # 6 AM UTC = midnight CDT (UTC-6)
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Remove expired open houses
+        run: |
+          python3 << 'EOF'
+          import re, json, sys
+          from datetime import date
+
+          with open('open-houses.js', 'r') as f:
+              content = f.read()
+
+          match = re.search(r'window\.OPEN_HOUSES\s*=\s*(\[.*?\]);', content, re.DOTALL)
+          if not match:
+              print("Could not parse open-houses.js — skipping")
+              sys.exit(0)
+
+          data = json.loads(match.group(1))
+          today = date.today()
+          filtered = [oh for oh in data if date.fromisoformat(oh['date']) >= today]
+          removed = len(data) - len(filtered)
+
+          if removed == 0:
+              print("No expired entries.")
+              sys.exit(0)
+
+          new_json = json.dumps(filtered, indent=2)
+          new_content = content[:match.start(1)] + new_json + content[match.end(1):]
+
+          with open('open-houses.js', 'w') as f:
+              f.write(new_content)
+
+          print(f"Removed {removed} expired open house(s).")
+          EOF
+
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add open-houses.js
+          git diff --staged --quiet || git commit -m "chore: remove expired open houses [skip ci]"
+          git diff HEAD~1..HEAD --quiet 2>/dev/null || git push
