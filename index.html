@@ -5,8 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Jacob Page — REALTOR® at Halsey Real Estate. Open houses this weekend in Benton & Bryant, AR. Call or text (501) 794-9566." />
   <title>Jacob Page | REALTOR® | Halsey Real Estate</title>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-24X6ETMVKG"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-24X6ETMVKG');
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="open-houses.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -327,56 +336,10 @@
   <!-- RIGHT PANEL: content -->
   <div class="panel-right">
 
-    <!-- OPEN HOUSES -->
-    <div class="section">
-      <div class="section-label">Open Houses This Weekend</div>
-      <div class="oh-list">
-
-        <div class="oh-card">
-          <div class="oh-header">
-            <div class="oh-badge">This Saturday</div>
-            <div class="oh-price">$739,900</div>
-          </div>
-          <div class="oh-address">9017 Naples Cove</div>
-          <div class="oh-city">Benton, AR &mdash; Hurricane Lake Estates</div>
-          <div class="oh-specs">
-            <span class="oh-spec"><strong>4</strong> Bed</span>
-            <span class="oh-spec"><strong>3.5</strong> Bath</span>
-            <span class="oh-spec"><strong>3,500</strong> Sq Ft</span>
-            <span class="oh-spec"><strong>3-Car</strong> Garage</span>
-            <span class="oh-spec"><strong>0.49</strong> Acres</span>
-          </div>
-          <div class="oh-footer">
-            <div class="oh-time">Sat, Apr 4 &bull; 2:00&ndash;4:00 PM</div>
-            <div class="oh-actions">
-              <a class="oh-flyer" href="naples-flyer.jpg" target="_blank">Flyer</a>
-              <a class="oh-dir" href="#" onclick="openMaps('9017 Naples Cove, Benton, AR'); return false;">Directions &rarr;</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="oh-card">
-          <div class="oh-header">
-            <div class="oh-badge">This Sunday</div>
-            <div class="oh-price">$339,900</div>
-          </div>
-          <div class="oh-address">89 Bame Circle</div>
-          <div class="oh-city">Bryant, AR</div>
-          <div class="oh-specs">
-            <span class="oh-spec"><strong>3</strong> Bed</span>
-            <span class="oh-spec"><strong>3</strong> Bath</span>
-            <span class="oh-spec"><strong>2,632</strong> Sq Ft</span>
-          </div>
-          <div class="oh-footer">
-            <div class="oh-time">Sun, Apr 5 &bull; 2:00&ndash;4:00 PM</div>
-            <div class="oh-actions">
-              <a class="oh-flyer" href="bame-flyer.jpg" target="_blank">Flyer</a>
-              <a class="oh-dir" href="#" onclick="openMaps('89 Bame Circle, Bryant, AR'); return false;">Directions &rarr;</a>
-            </div>
-          </div>
-        </div>
-
-      </div>
+    <!-- OPEN HOUSES (rendered from open-houses.js) -->
+    <div class="section" id="oh-section" style="display:none">
+      <div class="section-label">Upcoming Open Houses</div>
+      <div class="oh-list" id="oh-list"></div>
     </div>
 
     <!-- ABOUT -->
@@ -469,6 +432,60 @@
 </div><!-- /page -->
 
 <script>
+  function renderOpenHouses() {
+    var section = document.getElementById('oh-section');
+    var list    = document.getElementById('oh-list');
+    if (!window.OPEN_HOUSES || !window.OPEN_HOUSES.length) return;
+
+    var today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    var upcoming = window.OPEN_HOUSES.filter(function(oh) {
+      var parts = oh.date.split('-');
+      return new Date(+parts[0], +parts[1] - 1, +parts[2]) >= today;
+    });
+
+    if (!upcoming.length) return;
+
+    upcoming.forEach(function(oh) {
+      var specs = oh.specs.map(function(s) {
+        var m = s.match(/^([\d,.]+(?:-\w+)?)\s+(.+)$/);
+        return m
+          ? '<span class="oh-spec"><strong>' + m[1] + '</strong> ' + m[2] + '</span>'
+          : '<span class="oh-spec">' + s + '</span>';
+      }).join('');
+
+      var neighborhood = oh.neighborhood ? ' &mdash; ' + oh.neighborhood : '';
+      var flyer = oh.flyer
+        ? '<a class="oh-flyer" href="' + oh.flyer + '" target="_blank">Flyer</a>'
+        : '';
+      var query = oh.mapsQuery.replace(/'/g, "\\'");
+
+      var card = document.createElement('div');
+      card.className = 'oh-card';
+      card.innerHTML =
+        '<div class="oh-header">' +
+          '<div class="oh-badge">' + oh.badge + '</div>' +
+          '<div class="oh-price">' + oh.price + '</div>' +
+        '</div>' +
+        '<div class="oh-address">' + oh.address + '</div>' +
+        '<div class="oh-city">' + oh.city + neighborhood + '</div>' +
+        '<div class="oh-specs">' + specs + '</div>' +
+        '<div class="oh-footer">' +
+          '<div class="oh-time">' + oh.time + '</div>' +
+          '<div class="oh-actions">' +
+            flyer +
+            '<a class="oh-dir" href="#" onclick="openMaps(\'' + query + '\'); return false;">Directions &rarr;</a>' +
+          '</div>' +
+        '</div>';
+      list.appendChild(card);
+    });
+
+    section.style.display = '';
+  }
+
+  renderOpenHouses();
+
   function openMaps(address) {
     const encoded = encodeURIComponent(address);
     if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
