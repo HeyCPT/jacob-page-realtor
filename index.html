@@ -314,22 +314,22 @@
     </div>
 
     <div class="btns">
-      <a class="btn btn-call" href="tel:+15017949566">
+      <a class="btn btn-call" href="tel:+15017949566" onclick="gtag('event','cta_click',{cta:'call'})">
         <span class="btn-icon">📞</span> Call (501) 794-9566
       </a>
-      <a class="btn btn-muted" href="sms:+15017949566">
+      <a class="btn btn-muted" href="sms:+15017949566" onclick="gtag('event','cta_click',{cta:'text'})">
         <span class="btn-icon">💬</span> Send a Text
       </a>
-      <a class="btn btn-muted" href="mailto:jacob@halseyre.com">
+      <a class="btn btn-muted" href="mailto:jacob@halseyre.com" onclick="gtag('event','cta_click',{cta:'email'})">
         <span class="btn-icon">✉️</span> jacob@halseyre.com
       </a>
-      <a class="btn btn-fb" href="https://www.facebook.com/profile.php?id=61577432034906" target="_blank" rel="noopener">
+      <a class="btn btn-fb" href="https://www.facebook.com/profile.php?id=61577432034906" target="_blank" rel="noopener" onclick="gtag('event','cta_click',{cta:'facebook'})">
         <span class="btn-icon">f</span> Follow on Facebook
       </a>
     </div>
 
     <div class="save-contact">
-      <a href="jacob-page.vcf">&#8595; Save Contact to Phone</a>
+      <a href="jacob-page.vcf" onclick="gtag('event','cta_click',{cta:'save_contact'})">&#8595; Save Contact to Phone</a>
     </div>
   </div><!-- /panel-left -->
 
@@ -456,8 +456,9 @@
       }).join('');
 
       var neighborhood = oh.neighborhood ? ' &mdash; ' + oh.neighborhood : '';
+      var addr = oh.address.replace(/'/g, "\\'");
       var flyer = oh.flyer
-        ? '<a class="oh-flyer" href="' + oh.flyer + '" target="_blank">Flyer</a>'
+        ? '<a class="oh-flyer" href="' + oh.flyer + '" target="_blank" onclick="gtag(\'event\',\'cta_click\',{cta:\'flyer\',property:\'' + addr + '\'})">Flyer</a>'
         : '';
       var query = oh.mapsQuery.replace(/'/g, "\\'");
 
@@ -475,7 +476,7 @@
           '<div class="oh-time">' + oh.time + '</div>' +
           '<div class="oh-actions">' +
             flyer +
-            '<a class="oh-dir" href="#" onclick="openMaps(\'' + query + '\'); return false;">Directions &rarr;</a>' +
+            '<a class="oh-dir" href="#" onclick="gtag(\'event\',\'cta_click\',{cta:\'directions\',property:\'' + addr + '\'}); openMaps(\'' + query + '\'); return false;">Directions &rarr;</a>' +
           '</div>' +
         '</div>';
       list.appendChild(card);
@@ -510,6 +511,8 @@
       'Interest: ' + interest,
       message ? 'Notes: ' + message    : null,
     ].filter(Boolean).join('\n');
+
+    gtag('event', 'generate_lead', { interest: interest });
 
     const smsLink = 'sms:+15017949566' +
       (navigator.userAgent.match(/iPhone|iPad/i) ? '&' : '?') +
